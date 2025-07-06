@@ -7,7 +7,12 @@ export const createUser = async (name: string, email: string, password: string) 
     const user = await User.create({ userID, name, email, password });
     return user;
 }
- 
+
+export const getUserByEmailAndProvider = async (email: string, provider: string) => {
+    const user = await User.findOne({ email, provider });
+    return user;
+}
+
 export const getUser = async (id: string) => {
     const user = await User.findById(id);
     return user;
@@ -32,4 +37,46 @@ export const addUserCategoryPreference = async (userId: any,categories: any) => 
 export const getUserCategoryPreference = async (userId: string) => {
     const userCategoryPreference = await UserCategoryPreference.find({ userId });
     return userCategoryPreference;
+}
+
+export const getUserProfile = async (userID: string) => {
+    const user = await User.findOne({ userID });
+    if (!user) {
+        throw new Error("User not found");
+    }
+    
+    const result = await UserCategoryPreference.aggregate([
+        { $match: { userId: user._id } },
+        { $unwind: "$preferredCategories" },
+        {
+            $lookup: {
+                from: "categories",
+                localField: "preferredCategories.categoryID",
+                foreignField: "_id",
+                as: "categoryDetails"
+            }
+        },
+        { $unwind: "$categoryDetails" },
+        { $match: { "categoryDetails.isActive": true } },
+        {
+            $project: {
+                _id: 0,
+                name: "$preferredCategories.categoryName",
+                id: "$categoryDetails._id"
+            }
+        }
+    ]);
+    
+    return {
+        user: {
+            userID: user.userID,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            provider: user.provider,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        },
+        categories: result
+    };
 }
