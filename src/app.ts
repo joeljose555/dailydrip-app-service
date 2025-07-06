@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes.ts";
 import categoryRoutes from "./routes/categoryRoutes.ts";
 import { connectDb } from "./utils/initDb.ts";
 import { logger, morganMiddleware } from "./utils/logger.ts";
+import authRoutes from "./routes/authRoutes";
+import { authenticateToken } from "./middleware/authMiddleware.ts";
 
 
 connectDb();
@@ -17,8 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morganMiddleware);
 
-app.use("/api/user", userRoutes);
-app.use("/api/category", categoryRoutes);
+// Auth routes (no authentication required)
+app.use("/api/auth", authRoutes);
+
+// Protected routes (authentication required)
+app.use("/api/user", authenticateToken, userRoutes);
+app.use("/api/categories", authenticateToken, categoryRoutes);
 
 app.listen(process.env.PORT, () => {
     logger.info(`Server is running on port ${process.env.PORT}`);

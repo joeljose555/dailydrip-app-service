@@ -13,7 +13,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const addUserCategoryPreference = async (req: Request, res: Response) => {
     try {
-        const { userId, categories } = req.body;
+        const { categories } = req.body;
+        const userId = (req as any).user.userID; // Get userId from authenticated user
         const userCategoryPreference = await addUserCategoryPreferenceService(userId, categories);
         res.status(201).json(userCategoryPreference);
     } catch (error) {

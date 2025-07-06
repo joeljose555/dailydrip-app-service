@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    userID:{
+    userID: {
         type: String,
         required: true,
         unique: true,
     },
-    name: {
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
         type: String,
         required: true,
     },
@@ -17,9 +21,19 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function () { return this.provider === 'local'; },
     },
-},{
+    provider: {
+        type: String,
+        enum: ['local', 'google', 'facebook', 'apple'],
+        default: 'local',
+    },
+    providerId: {
+        type: String,
+        required: function () { return this.provider !== 'local'; },
+        unique: false,
+    },
+}, {
     timestamps: true,
 });
 
