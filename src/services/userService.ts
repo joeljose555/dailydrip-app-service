@@ -23,7 +23,6 @@ export const addUserCategoryPreference = async (userId: any,categories: any) => 
     if(!user){
         throw new Error("User not found");
     }
-    userId = user._id;
     categories = categories.map((category:any)=>{
         return {
             categoryID:category._id,

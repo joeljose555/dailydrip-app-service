@@ -5,6 +5,7 @@ import passport from 'passport';
 import FacebookStrategy from 'passport-facebook';
 import AppleStrategy from 'passport-apple';
 import User from '../models/User';
+import { v4 as uuidv4 } from 'uuid';
 import { createUser, getUserByEmailAndProvider, getUserByProviderId } from '../utils/dbUser';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -26,7 +27,7 @@ export async function signupService({ firstName, lastName,email, password }) {
   const existing = await getUserByEmailAndProvider(email, 'local');
   if (existing) throw new Error('User exists');
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await createUser({ firstName,lastName, email, password: hashedPassword, provider: 'local', userID: email });
+  const user = await createUser({ firstName,lastName, email, password: hashedPassword, provider: 'local', userID: uuidv4() });
   const token = generateToken(user);
   return { token };
 }
