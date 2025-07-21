@@ -45,7 +45,7 @@ export const getUserProfile = async (userID: string) => {
     }
     
     const result = await UserCategoryPreference.aggregate([
-        { $match: { userId: user._id } },
+        { $match: { userId: user.userID } }, // Use user.userID if that's what you store
         { $unwind: "$preferredCategories" },
         {
             $lookup: {
