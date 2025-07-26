@@ -2,12 +2,12 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import userRoutes from "./routes/userRoutes.ts";
-import categoryRoutes from "./routes/categoryRoutes.ts";
-import { connectDb } from "./utils/initDb.ts";
-import { logger, morganMiddleware } from "./utils/logger.ts";
+import userRoutes from "./routes/userRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
+import { connectDb } from "./utils/initDb";
+import { logger, morganMiddleware } from "./utils/logger";
 import authRoutes from "./routes/authRoutes";
-import { authenticateToken } from "./middleware/authMiddleware.ts";
+import { authenticateToken } from "./middleware/authMiddleware";
 
 
 connectDb();
