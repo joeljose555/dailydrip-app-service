@@ -19,6 +19,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morganMiddleware);
 
+// Health check endpoint (no authentication required)
+app.get("/api/health", (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        message: "Server is running",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
 // Auth routes (no authentication required)
 app.use("/api/auth", authRoutes);
 
