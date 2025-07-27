@@ -43,19 +43,19 @@ export const getUserHomeScreen = async (req, res) => {
                 id: "daily_brief",
                 text: "Daily news",
                 title: "Daily Brief",
-                image: "https://via.placeholder.com/150?text=Daily"
+                image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=150&h=150&fit=crop"
             },
             {
                 id: "morning_brief",
                 text: "Morning news",
                 title: "Morning Brief",
-                image: "https://via.placeholder.com/150?text=Morning"
+                image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop"
             },
             {
                 id: "evening_brief",
                 text: "Evening news",
                 title: "Evening Brief",
-                image: "https://via.placeholder.com/150?text=Evening"
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=150&h=150&fit=crop"
             }
         ];
 
@@ -70,7 +70,7 @@ export const getUserHomeScreen = async (req, res) => {
         const categoriesArr = categories.map(cat => ({
             text: cat.name,
             title: cat.name + " News",
-            image: "https://via.placeholder.com/100",
+            image: cat.imageUri,
             id: cat.id
         }));
 
@@ -82,14 +82,14 @@ export const getUserHomeScreen = async (req, res) => {
 
 export const getAllCategoriesFormatted = async (req, res) => {
     try {
-        const foo = req.query.foo;
+        const foo = req.query.foo; //TODO : pass userId and remove the user categories to avoid duplicate categories
         console.log('Received param foo:', foo);
         const categories = await require('../services/categoriesService').getAllCategories();
         const formatted = categories.map(cat => ({
             id: cat._id,
             title: cat.name,
             text: cat.name + ' News',
-            image: 'https://via.placeholder.com/100'
+            image: cat.imageUri,
         }));
         return res.json({ categories: formatted });
     } catch (err) {
