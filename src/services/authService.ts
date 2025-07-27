@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import passport from 'passport';
-import FacebookStrategy from 'passport-facebook';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import AppleStrategy from 'passport-apple';
 import User from '../models/User';
 import { v4 as uuidv4 } from 'uuid';

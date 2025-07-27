@@ -8,9 +8,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsx src/app.ts",
+    "start": "node dist/app.js",
     "dev": "tsx watch src/app.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "start:dev": "tsx src/app.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -31,9 +32,13 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.0.7",
+    "@types/passport": "^1.0.17",
+    "@types/passport-facebook": "^3.0.3",
     "prettier": "^3.6.2",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
