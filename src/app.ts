@@ -8,6 +8,7 @@ import { connectDb } from "./utils/initDb";
 import { logger, morganMiddleware } from "./utils/logger";
 import authRoutes from "./routes/authRoutes";
 import { authenticateToken } from "./middleware/authMiddleware";
+import userMixesRoutes from "./routes/userMixesRoutes";
 
 
 connectDb();
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 // Protected routes (authentication required)
 app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/categories", authenticateToken, categoryRoutes);
+app.use("/api/mixes", authenticateToken, userMixesRoutes);
 
 app.listen(process.env.PORT, () => {
     logger.info(`Server is running on port ${process.env.PORT}`);

@@ -20,7 +20,7 @@ const APPLE_PRIVATE_KEY = process.env.APPLE_PRIVATE_KEY || 'your_apple_private_k
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 function generateToken(user) {
-  return jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id: user.id, email: user.email ,userID: user.userID}, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export async function signupService({ firstName, lastName,email, password }) {

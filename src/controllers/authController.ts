@@ -8,7 +8,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'your_google_client_id'
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 function generateToken(user) {
-  return jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id: user.id, email: user.email ,userID: user.userID}, JWT_SECRET, { expiresIn: '7d' });
 }
 
 export async function signup(req, res) {

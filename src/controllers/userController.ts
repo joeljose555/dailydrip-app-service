@@ -40,22 +40,32 @@ export const getUserHomeScreen = async (req, res) => {
         // Hardcoded array
         const main = [
             {
-                id: "daily_brief",
-                text: "Daily news",
-                title: "Daily Brief",
-                image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=150&h=150&fit=crop"
-            },
-            {
-                id: "morning_brief",
-                text: "Morning news",
-                title: "Morning Brief",
+                id: "morning_mix",
+                type: "morning",
+                title: "Morning Mix",
+                text: "Start your day informed",
                 image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop"
             },
             {
-                id: "evening_brief",
-                text: "Evening news",
-                title: "Evening Brief",
+                id: "afternoon_mix",
+                type: "afternoon",
+                title: "Afternoon Mix",
+                text: "Catch up on the day's events",
+                image: "https://images.unsplash.com/photo-1553341829-4c9f53513b3b?w=150&h=150&fit=crop"
+            },
+            {
+                id: "evening_mix",
+                type: "evening",
+                title: "Evening Mix",
+                text: "Wind down with the latest news",
                 image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=150&h=150&fit=crop"
+            },
+            {
+                id: "night_mix",
+                type: "night",
+                title: "Night Mix",
+                text: "The stories that mattered today",
+                image: "https://images.unsplash.com/photo-1532074205216-d0e1f4b87368?w=150&h=150&fit=crop"
             }
         ];
 
