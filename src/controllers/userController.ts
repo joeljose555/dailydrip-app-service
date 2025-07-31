@@ -75,16 +75,10 @@ export const getUserHomeScreen = async (req, res) => {
             return res.status(400).json({ error: "Missing userId" });
         }
 
-        // Fetch user preferred categories
-        const { categories } = await require('../services/userService').getUserProfile(userId);
-        const categoriesArr = categories.map(cat => ({
-            text: cat.name,
-            title: cat.name + " News",
-            image: cat.imageUri,
-            id: cat.id
-        }));
+        // Fetch user preferred categories for home screen
+        const categoriesMain = await require('../services/userService').fetchCategoriesForHome(userId);
 
-        return res.json({ main, categories: categoriesArr });
+        return res.json({ main, categories: categoriesMain });
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
@@ -95,13 +89,14 @@ export const getAllCategoriesFormatted = async (req, res) => {
         const foo = req.query.foo; //TODO : pass userId and remove the user categories to avoid duplicate categories
         console.log('Received param foo:', foo);
         const categories = await require('../services/categoriesService').getAllCategories();
-        const formatted = categories.map(cat => ({
+        const main = categories.map(cat => ({
             id: cat._id,
-            title: cat.name,
-            text: cat.name + ' News',
-            image: cat.imageUri,
+            type: "category",
+            title: cat.name + " News",
+            text: cat.name,
+            image: cat.imageUri || "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop" // fallback image
         }));
-        return res.json({ categories: formatted });
+        return res.json({ categories:main });
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }

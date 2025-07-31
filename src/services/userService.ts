@@ -1,3 +1,4 @@
+import Category from "../models/Categories";
 import User from "../models/User";
 import UserCategoryPreference from "../models/userCategoryPreference";
 import { v4 as uuidv4 } from 'uuid';
@@ -78,4 +79,38 @@ export const getUserProfile = async (userID: string) => {
         },
         categories: result
     };
+}
+
+export const fetchCategoriesForHome = async (userId: string) => {
+    const user = await User.findOne({ userID: userId });
+    if (!user) {
+        throw new Error("User not found");
+    }
+    
+    const result = await UserCategoryPreference.aggregate([
+        { $match: { userId: user.userID } },
+        { $unwind: "$preferredCategories" },
+        {
+            $lookup: {
+                from: "categories",
+                localField: "preferredCategories.categoryID",
+                foreignField: "_id",
+                as: "categoryDetails"
+            }
+        },
+        { $unwind: "$categoryDetails" },
+        { $match: { "categoryDetails.isActive": true } },
+        {
+            $project: {
+                _id: 0,
+                id: "$categoryDetails._id",
+                type: { $toLower: "$categoryDetails.name" },
+                title: { $concat: ["$categoryDetails.name", " News"] },
+                text: "$categoryDetails.name",
+                image: "$categoryDetails.imageUri"
+            }
+        }
+    ]);
+    
+    return result;
 }

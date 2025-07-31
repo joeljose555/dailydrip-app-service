@@ -9,6 +9,7 @@ import { logger, morganMiddleware } from "./utils/logger";
 import authRoutes from "./routes/authRoutes";
 import { authenticateToken } from "./middleware/authMiddleware";
 import userMixesRoutes from "./routes/userMixesRoutes";
+import newsSummariesRoutes from "./routes/newsSummariesRoutes";
 
 
 connectDb();
@@ -37,6 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/categories", authenticateToken, categoryRoutes);
 app.use("/api/mixes", authenticateToken, userMixesRoutes);
+app.use("/api/news-summaries", authenticateToken, newsSummariesRoutes);
 
 app.listen(process.env.PORT, () => {
     logger.info(`Server is running on port ${process.env.PORT}`);
