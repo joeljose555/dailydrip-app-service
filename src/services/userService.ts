@@ -26,8 +26,8 @@ export const addUserCategoryPreference = async (userId: any,categories: any) => 
     }
     categories = categories.map((category:any)=>{
         return {
-            categoryID:category._id,
-            categoryName:category.name
+            categoryID:category.id,
+            categoryName:category.title
         }
     })
     const userCategoryPreference = await UserCategoryPreference.create({userId,preferredCategories:categories});
