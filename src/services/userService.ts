@@ -2,6 +2,7 @@ import Category from "../models/Categories";
 import User from "../models/User";
 import UserCategoryPreference from "../models/userCategoryPreference";
 import { v4 as uuidv4 } from 'uuid';
+import { IUserCategoryPreferenceRequest } from "../types";
 
 export const createUser = async (name: string, email: string, password: string) => {
     const userID = uuidv4();
@@ -19,19 +20,32 @@ export const getUser = async (id: string) => {
     return user;
 }
 
-export const addUserCategoryPreference = async (userId: any,categories: any) => {
-    const user = await User.findOne({userID:userId});
-    if(!user){
+export const updateUserCategoryPreference = async (userId: string, categories: IUserCategoryPreferenceRequest[]) => {
+    const user = await User.findOne({ userID: userId });
+    if (!user) {
         throw new Error("User not found");
     }
-    categories = categories.map((category:any)=>{
-        return {
-            categoryID:category.id,
-            categoryName:category.title
-        }
-    })
-    const userCategoryPreference = await UserCategoryPreference.create({userId,preferredCategories:categories});
-    return userCategoryPreference;
+    
+    // Check if user already has preferences
+    const existingPreference = await UserCategoryPreference.findOne({ userId });
+    if (existingPreference) {
+        // Update existing preferences
+        const updatedPreference = await UserCategoryPreference.findOneAndUpdate(
+            { userId },
+            { preferredCategories: categories },
+            { new: true, runValidators: true }
+        );
+        return updatedPreference;
+    } else {
+
+        // User has no preferences yet
+        throw new Error("User has no existing category preferences to update");
+    }
+}
+
+// Keep the old function name for backward compatibility
+export const addUserCategoryPreference = async (userId: any, categories: any) => {
+    return updateUserCategoryPreference(userId, categories);
 }
 
 export const getUserCategoryPreference = async (userId: string) => {
@@ -62,7 +76,8 @@ export const getUserProfile = async (userID: string) => {
             $project: {
                 _id: 0,
                 name: "$preferredCategories.categoryName",
-                id: "$categoryDetails._id"
+                id: "$categoryDetails._id",
+                imageUrl: "$categoryDetails.imageUri"
             }
         }
     ]);
@@ -70,8 +85,7 @@ export const getUserProfile = async (userID: string) => {
     return {
         user: {
             userID: user.userID,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            name: user.name,
             email: user.email,
             provider: user.provider,
             createdAt: user.createdAt,

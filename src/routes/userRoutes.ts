@@ -4,8 +4,8 @@ import { createUser, addUserCategoryPreference, getProfile, getUserHomeScreen } 
 const router = express.Router();
 
 router.post("/createUser", createUser);
-router.post("/addUserCategoryPreference", addUserCategoryPreference);
+router.post("/updateUserCategoryPreference", addUserCategoryPreference);
 router.get("/profile", getProfile);
-router.get('/home', getUserHomeScreen);
+//router.get('/home', getUserHomeScreen);
 
 export default router

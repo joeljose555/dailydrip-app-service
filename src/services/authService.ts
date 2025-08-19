@@ -23,11 +23,11 @@ function generateToken(user) {
   return jwt.sign({ id: user.id, email: user.email ,userID: user.userID}, JWT_SECRET, { expiresIn: '7d' });
 }
 
-export async function signupService({ firstName, lastName,email, password }) {
+export async function signupService({ name,email, password }) {
   const existing = await getUserByEmailAndProvider(email, 'local');
   if (existing) throw new Error('User exists');
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await createUser({ firstName,lastName, email, password: hashedPassword, provider: 'local', userID: uuidv4() });
+  const user = await createUser({ name, email, password: hashedPassword, provider: 'local', userID: uuidv4() });
   const token = generateToken(user);
   return { token };
 }

@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import { getNewsSummaryById, getAllNewsSummaries } from "../services/newsSummariesService";
+import { HttpStatus } from '../constants/httpStatus';
 
 export const getNewsSummaryByIdController = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const newsSummary = await getNewsSummaryById(id);
-        res.status(200).json(newsSummary);
+        res.status(HttpStatus.OK).json(newsSummary);
     } catch (error) {
         console.log(error);
-        if (error.message === "News summary not found") {
-            res.status(404).json({ message: "News summary not found" });
+        if ((error as Error).message === "News summary not found") {
+            res.status(HttpStatus.NOT_FOUND).json({ message: "News summary not found" });
         } else {
-            res.status(500).json({ message: "Internal server error" });
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
         }
     }
 }
@@ -19,9 +20,9 @@ export const getNewsSummaryByIdController = async (req: Request, res: Response) 
 export const getAllNewsSummariesController = async (req: Request, res: Response) => {
     try {
         const newsSummaries = await getAllNewsSummaries();
-        res.status(200).json(newsSummaries);
+        res.status(HttpStatus.OK).json(newsSummaries);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
     }
 } 

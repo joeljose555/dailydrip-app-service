@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Model, Schema } from 'mongoose';
+import { IUserMix, IUserMixDocument } from '../types/users';
 
-const userMixesSchema = new mongoose.Schema({
+const userMixesSchema = new Schema<IUserMixDocument>({
     userId: {
         type: String,
         required: true,
@@ -18,12 +19,15 @@ const userMixesSchema = new mongoose.Schema({
     },
     mixType: {
         type: String,
-        enum:['morning','afternoon','evening','night'],
-        default:'morning'
+        enum: ['morning', 'afternoon', 'evening', 'night'],
+        default: 'morning'
     }
-},{
+}, {
     timestamps: true,
     versionKey: false,
 });
 
-export default mongoose.model('UserMixes', userMixesSchema);
+const UserMixes: Model<IUserMixDocument> = mongoose.model<IUserMixDocument>('UserMixes', userMixesSchema);
+
+export default UserMixes;
+export { IUserMix, IUserMixDocument };
