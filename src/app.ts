@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes";
 import { authenticateToken } from "./middleware/authMiddleware";
 import userMixesRoutes from "./routes/userMixesRoutes";
 import newsSummariesRoutes from "./routes/newsSummariesRoutes";
+import { specs, swaggerUi } from "./config/swagger";
 
 
 connectDb();
@@ -20,6 +21,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morganMiddleware);
+
+// Swagger API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'DailyDrip API Documentation'
+}));
 
 // Health check endpoint (no authentication required)
 app.get("/api/health", (req, res) => {

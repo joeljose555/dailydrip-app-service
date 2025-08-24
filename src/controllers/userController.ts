@@ -79,16 +79,17 @@ export const getUserHomeScreen = async (req: Request, res: Response) => {
         // Get userId from req.user or req.query
         const userId = (req as any).user?.userID || req.query.userId;
         if (!userId) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ error: "Missing userId" });
+            res.status(HttpStatus.BAD_REQUEST).json({ error: "Missing userId" });
+            return;
         }
 
         // Fetch user preferred categories for home screen
         const categoriesMain = await require('../services/userService').fetchCategoriesForHome(userId);
 
         const response: IUserHomeScreenResponse = { main, categories: categoriesMain };
-        return res.json(response);
+        res.json(response);
     } catch (err) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
     }
 }
 
@@ -104,8 +105,8 @@ export const getAllCategoriesFormatted = async (req: Request, res: Response) => 
             text: cat.name,
             image: cat.imageUri || "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop" // fallback image
         }));
-        return res.json({ categories: main });
+        res.json({ categories: main });
     } catch (err) {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
     }
 }
