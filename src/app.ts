@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morganMiddleware);
 
 // Swagger API documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'DailyDrip API Documentation'
 }));
