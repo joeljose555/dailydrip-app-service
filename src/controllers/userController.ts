@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { createUser as createUserService, addUserCategoryPreference as addUserCategoryPreferenceService, getUserProfile, updateUserCategoryPreference } from "../services/userService";
+import { createUser as createUserService, 
+    addUserCategoryPreference as addUserCategoryPreferenceService, 
+    getUserProfile, 
+    updateUserCategoryPreference, 
+    getUserPreferredCategories
+ } from"../services/userService";
 import { title } from "process";
 import { HttpStatus } from '../constants/httpStatus';
 import { 
@@ -8,6 +13,7 @@ import {
     IUserHomeScreenResponse,
     IHomeScreenItem 
 } from '../types/users';
+import Category from "../models/Categories";
 
 export const createUser = async (req: Request, res: Response) => {
     try {
@@ -21,7 +27,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const addUserCategoryPreference = async (req: Request, res: Response) => {
     try {
-        const  categories : IUserCategoryPreferenceRequest[] = req.body;
+        const  categories  = req.body; // expecting an array of { categoryID, categoryName }
         const userId = (req as any).user.userID; // Get userId from authenticated user
         const userCategoryPreference = await updateUserCategoryPreference(userId, categories);
         res.status(HttpStatus.CREATED).json(userCategoryPreference);
@@ -83,8 +89,26 @@ export const getUserHomeScreen = async (req: Request, res: Response) => {
             return;
         }
 
+        console.log('userId', userId);
+
         // Fetch user preferred categories for home screen
-        const categoriesMain = await require('../services/userService').fetchCategoriesForHome(userId);
+        const refs = await require('../services/userService').getUserPreferredCategoryRefs(userId as string);
+        const ids = refs.map((r: any) => r.categoryID);
+        const cats = await Category.find({ _id: { $in: ids }, isActive: true }).lean();
+        const idToCat = new Map<string, any>(cats.map((c: any) => [String(c._id), c]));
+        const categoriesMain = refs
+            .map((r: any) => {
+                const cat = idToCat.get(String(r.categoryID));
+                if (!cat) return null;
+                return {
+                    id: cat._id,
+                    type: String(cat.name).toLowerCase(),
+                    title: `${cat.name} News`,
+                    text: cat.name,
+                    image: cat.imageUri
+                };
+            })
+            .filter(Boolean) as IHomeScreenItem[];
 
         const response: IUserHomeScreenResponse = { main, categories: categoriesMain };
         res.json(response);

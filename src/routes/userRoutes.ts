@@ -101,28 +101,21 @@ router.post("/createUser", createUser);
  *             type: array
  *             items:
  *               type: object
- *               required: [categories]
+ *               required: [categoryID, categoryName]
  *               properties:
- *                 categories:
- *                   type: array
- *                   items:
- *                     type: object
- *                     required: [categoryID, categoryName]
- *                     properties:
- *                       categoryID:
- *                         type: string
- *                         description: MongoDB ObjectId of the category
- *                         example: "507f1f77bcf86cd799439011"
- *                       categoryName:
- *                         type: string
- *                         description: Name of the category
- *                         example: "Technology"
+ *                 categoryID:
+ *                   type: string
+ *                   description: MongoDB ObjectId of the category
+ *                   example: "507f1f77bcf86cd799439011"
+ *                 categoryName:
+ *                   type: string
+ *                   description: Name of the category
+ *                   example: "Technology"
  *           example:
- *             - categories:
- *               - categoryID: "507f1f77bcf86cd799439011"
- *                 categoryName: "Technology"
- *               - categoryID: "507f1f77bcf86cd799439012"
- *                 categoryName: "Sports"
+ *             - categoryID: "507f1f77bcf86cd799439011"
+ *               categoryName: "Technology"
+ *             - categoryID: "507f1f77bcf86cd799439012"
+ *               categoryName: "Sports"
  *     responses:
  *       201:
  *         description: User category preferences successfully updated
@@ -319,6 +312,39 @@ router.get("/profile", getProfile);
  *                         type: string
  *                         description: Category image URL
  *                         example: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop"
+ *             example:
+ *               main:
+ *                 - id: "morning_mix"
+ *                   type: "morning"
+ *                   title: "Morning Mix"
+ *                   text: "Start your day informed"
+ *                   image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop"
+ *                 - id: "afternoon_mix"
+ *                   type: "afternoon"
+ *                   title: "Afternoon Mix"
+ *                   text: "Catch up on the day's events"
+ *                   image: "https://images.unsplash.com/photo-1553341829-4c9f53513b3b?w=150&h=150&fit=crop"
+ *                 - id: "evening_mix"
+ *                   type: "evening"
+ *                   title: "Evening Mix"
+ *                   text: "Wind down with the latest news"
+ *                   image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=150&h=150&fit=crop"
+ *                 - id: "night_mix"
+ *                   type: "night"
+ *                   title: "Night Mix"
+ *                   text: "The stories that mattered today"
+ *                   image: "https://images.unsplash.com/photo-1532074205216-d0e1f4b87368?w=150&h=150&fit=crop"
+ *               categories:
+ *                 - id: "507f1f77bcf86cd799439011"
+ *                   type: "technology"
+ *                   title: "Technology News"
+ *                   text: "Technology"
+ *                   image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop"
+ *                 - id: "507f1f77bcf86cd799439012"
+ *                   type: "sports"
+ *                   title: "Sports News"
+ *                   text: "Sports"
+ *                   image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop"
  *       400:
  *         description: Bad request - missing userId
  *         content:

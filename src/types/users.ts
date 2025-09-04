@@ -74,6 +74,12 @@ export interface IUserCategoryPreferenceRequest {
     }>;
 }
 
+// A single category preference item for flattened request bodies
+export interface ICategoryPreferenceItem {
+    categoryID: string;
+    categoryName: string;
+}
+
 export interface IUserMix {
     _id?: string;
     userId: string;
