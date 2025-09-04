@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, addUserCategoryPreference, getProfile, getUserHomeScreen, getAllCategoriesFormatted } from "../controllers/userController";
+import { createUser, addUserCategoryPreference, getProfile, getUserHomeScreen, getAllCategoriesFormatted ,getUserPreferredCategoriesStrings} from "../controllers/userController";
 
 const router = express.Router();
 
@@ -429,5 +429,62 @@ router.get('/home', getUserHomeScreen);
  *                   example: "Internal server error"
  */
 router.get('/categories', getAllCategoriesFormatted);
+
+/**
+ * @swagger
+ * /user/preferred-categories:
+ *   get:
+ *     summary: Get user's preferred categories as strings
+ *     description: Returns array of user's preferred categories with categoryId and categoryName as strings
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: User ID (if not provided, taken from auth token)
+ *     responses:
+ *       200:
+ *         description: Preferred categories successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   categoryId:
+ *                     type: string
+ *                     description: Category ID as string
+ *                     example: "507f1f77bcf86cd799439011"
+ *                   categoryName:
+ *                     type: string
+ *                     description: Category name
+ *                     example: "Technology"
+ *       400:
+ *         description: Bad request - missing userId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing userId"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+router.get('/preferred-categories', getUserPreferredCategoriesStrings);
 
 export default router

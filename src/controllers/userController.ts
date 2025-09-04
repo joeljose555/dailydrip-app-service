@@ -3,7 +3,8 @@ import { createUser as createUserService,
     addUserCategoryPreference as addUserCategoryPreferenceService, 
     getUserProfile, 
     updateUserCategoryPreference, 
-    getUserPreferredCategories
+    getUserPreferredCategories,
+    getUserPreferredCategoriesStrings as getUserPreferredCategoriesStringsService
  } from"../services/userService";
 import { title } from "process";
 import { HttpStatus } from '../constants/httpStatus';
@@ -50,7 +51,16 @@ export const getProfile = async (req: Request, res: Response) => {
 
 export const getUserHomeScreen = async (req: Request, res: Response) => {
     try {
-        // Hardcoded array
+        // Get userId from req.user or req.query
+        const userId = (req as any).user?.userID || req.query.userId;
+        if (!userId) {
+            res.status(HttpStatus.BAD_REQUEST).json({ error: "Missing userId" });
+            return;
+        }
+
+        console.log('userId', userId);
+
+        // Default mixes for main
         const main: IHomeScreenItem[] = [
             {
                 id: "morning_mix",
@@ -82,35 +92,17 @@ export const getUserHomeScreen = async (req: Request, res: Response) => {
             }
         ];
 
-        // Get userId from req.user or req.query
-        const userId = (req as any).user?.userID || req.query.userId;
-        if (!userId) {
-            res.status(HttpStatus.BAD_REQUEST).json({ error: "Missing userId" });
-            return;
-        }
+        // Preferred categories mapped to same tile shape
+        const preferredStrings = await getUserPreferredCategoriesStringsService(userId as string);
+        const categories: IHomeScreenItem[] = preferredStrings.map((c: { categoryId: string; categoryName: string }) => ({
+            id: c.categoryId,
+            type: "category",
+            title: `${c.categoryName} News`,
+            text: c.categoryName,
+            image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=150&h=150&fit=crop"
+        }));
 
-        console.log('userId', userId);
-
-        // Fetch user preferred categories for home screen
-        const refs = await require('../services/userService').getUserPreferredCategoryRefs(userId as string);
-        const ids = refs.map((r: any) => r.categoryID);
-        const cats = await Category.find({ _id: { $in: ids }, isActive: true }).lean();
-        const idToCat = new Map<string, any>(cats.map((c: any) => [String(c._id), c]));
-        const categoriesMain = refs
-            .map((r: any) => {
-                const cat = idToCat.get(String(r.categoryID));
-                if (!cat) return null;
-                return {
-                    id: cat._id,
-                    type: String(cat.name).toLowerCase(),
-                    title: `${cat.name} News`,
-                    text: cat.name,
-                    image: cat.imageUri
-                };
-            })
-            .filter(Boolean) as IHomeScreenItem[];
-
-        const response: IUserHomeScreenResponse = { main, categories: categoriesMain };
+        const response: IUserHomeScreenResponse = { main, categories };
         res.json(response);
     } catch (err) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
@@ -132,5 +124,21 @@ export const getAllCategoriesFormatted = async (req: Request, res: Response) => 
         res.json({ categories: main });
     } catch (err) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message });
+    }
+}
+
+export const getUserPreferredCategoriesStrings = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user?.userID || req.query.userId;
+        if (!userId) {
+            res.status(HttpStatus.BAD_REQUEST).json({ error: "Missing userId" });
+            return;
+        }
+      
+        const categories = await getUserPreferredCategoriesStringsService(userId as string);
+        res.status(HttpStatus.OK).json(categories);
+    } catch (error) {
+        console.log(error);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
     }
 }

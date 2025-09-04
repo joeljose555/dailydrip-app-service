@@ -84,28 +84,11 @@ export const getUserProfile = async (userID: string) => {
         throw new Error("User not found");
     }
     
-    const result = await UserCategoryPreference.aggregate([
-        { $match: { userId: user.userID } }, // Use user.userID if that's what you store
-        { $unwind: "$preferredCategories" },
-        {
-            $lookup: {
-                from: "categories",
-                localField: "preferredCategories.categoryID",
-                foreignField: "_id",
-                as: "categoryDetails"
-            }
-        },
-        { $unwind: "$categoryDetails" },
-        { $match: { "categoryDetails.isActive": true } },
-        {
-            $project: {
-                _id: 0,
-                name: "$preferredCategories.categoryName",
-                id: "$categoryDetails._id",
-                imageUrl: "$categoryDetails.imageUri"
-            }
-        }
-    ]);
+    const preference = await UserCategoryPreference.findOne({ userId: user.userID }).lean();
+    const result = (preference?.preferredCategories || []).map((c: any) => ({
+        categoryId: typeof c.categoryID === 'string' ? c.categoryID : String(c.categoryID),
+        categoryName: c.categoryName
+    }));
     
     return {
         user: {
@@ -122,7 +105,6 @@ export const getUserProfile = async (userID: string) => {
 
 export const getUserPreferredCategories = async (userId: string) => {
     const user = await User.findOne({ userID: userId });
-    console.log('user', user);
     if (!user) {
         return [];
     }
@@ -144,7 +126,7 @@ export const getUserPreferredCategories = async (userId: string) => {
     const idToCategory = new Map<string, any>(
         categories.map((c: any) => [String(c._id), c])
     );
-
+console.log()
     // Map back to home screen format, preserving preferred order and skipping missing
     const result = preferred
         .map(p => {
@@ -163,17 +145,19 @@ export const getUserPreferredCategories = async (userId: string) => {
     return result as any[];
 }
 
-export const getUserPreferredCategoryRefs = async (userId: string) => {
+export const getUserPreferredCategoriesStrings = async (userId: string) => {
     const user = await User.findOne({ userID: userId });
     if (!user) {
         return [];
     }
+
     const preference = await UserCategoryPreference.findOne({ userId: user.userID }).lean();
-    if (!preference || !preference.preferredCategories) {
+    if (!preference || !preference.preferredCategories || preference.preferredCategories.length === 0) {
         return [];
     }
+
     return preference.preferredCategories.map((c: any) => ({
-        categoryID: typeof c.categoryID === 'string' ? c.categoryID : String(c.categoryID),
+        categoryId: typeof c.categoryID === 'string' ? c.categoryID : String(c.categoryID),
         categoryName: c.categoryName
     }));
 }
