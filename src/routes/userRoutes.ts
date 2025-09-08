@@ -1,5 +1,6 @@
 import express from "express";
 import { createUser, addUserCategoryPreference, getProfile, getUserHomeScreen, getAllCategoriesFormatted ,getUserPreferredCategoriesStrings} from "../controllers/userController";
+import { getLatestUserMixController } from "../controllers/userMixesController";
 
 const router = express.Router();
 
@@ -486,5 +487,67 @@ router.get('/categories', getAllCategoriesFormatted);
  *                   example: "Internal server error"
  */
 router.get('/preferred-categories', getUserPreferredCategoriesStrings);
+
+/**
+ * @swagger
+ * /user/mixes/latest/{userId}/{mixType}:
+ *   get:
+ *     summary: Get the latest user mix by type
+ *     description: Retrieves the most recent mix for the specified user and mix type.
+ *     tags: [User Mixes]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User ID
+ *         example: "550e8400-e29b-41d4-a716-446655440000"
+ *       - in: path
+ *         name: mixType
+ *         schema:
+ *           type: string
+ *           enum: [morning, afternoon, evening, night]
+ *         required: true
+ *         description: Mix type
+ *         example: "morning"
+ *     responses:
+ *       200:
+ *         description: Latest user mix
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 audioUrl:
+ *                   type: string
+ *                 mixName:
+ *                   type: string
+ *                 mixIcon:
+ *                   type: string
+ *                   nullable: true
+ *                 mixType:
+ *                   type: string
+ *                   enum: [morning, afternoon, evening, night]
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Bad request - missing parameters
+ *       404:
+ *         description: No mix found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/mixes/latest/:userId/:mixType', getLatestUserMixController);
 
 export default router

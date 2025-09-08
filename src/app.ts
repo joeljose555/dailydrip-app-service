@@ -8,7 +8,6 @@ import { connectDb } from "./utils/initDb";
 import { logger, morganMiddleware } from "./utils/logger";
 import authRoutes from "./routes/authRoutes";
 import { authenticateToken } from "./middleware/authMiddleware";
-import userMixesRoutes from "./routes/userMixesRoutes";
 import newsSummariesRoutes from "./routes/newsSummariesRoutes";
 import { specs, swaggerUi } from "./config/swagger";
 
@@ -44,7 +43,6 @@ app.use("/api/auth", authRoutes);
 // Protected routes (authentication required)
 app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/categories", authenticateToken, categoryRoutes);
-app.use("/api/mixes", authenticateToken, userMixesRoutes);
 app.use("/api/news-summaries", authenticateToken, newsSummariesRoutes);
 
 app.listen(process.env.PORT, () => {
